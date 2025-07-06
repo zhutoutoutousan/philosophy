@@ -1,5 +1,5 @@
-import { ReadingInterface } from "@/components/reading-interface"
+import ReadingInterface from "@/components/reading-interface"
 
-export default function BaconInstauratioPage() {
-  return <ReadingInterface />
+export default function BaconInstauratio() {
+  return <ReadingInterface bookId="bacon" />
 } 

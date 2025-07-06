@@ -30,6 +30,8 @@ import {
   ScrollText,
   BookMarked
 } from "lucide-react"
+import { Metadata } from 'next'
+import Head from 'next/head'
 
 interface ReadingInterfaceProps {
   bookId?: string
@@ -70,7 +72,24 @@ interface Section {
   quiz?: QuizQuestion[];
 }
 
-export function ReadingInterface({ bookId = "kant" }: ReadingInterfaceProps) {
+interface MermaidProps {
+  chart: string;
+  className?: string;
+}
+
+const seoMetadata = {
+  title: 'Kant\'s Critique of Pure Reason - Interactive Study Guide',
+  description: 'An interactive trilingual study guide for Kant\'s Critique of Pure Reason with translations, commentary, diagrams, and quizzes.',
+  keywords: 'Kant, Critique of Pure Reason, philosophy, metaphysics, transcendental idealism, German philosophy, interactive learning',
+  openGraph: {
+    title: 'Kant\'s Critique of Pure Reason - Interactive Study Guide',
+    description: 'Study Kant\'s masterwork with parallel translations, expert commentary, and interactive features',
+    type: 'website',
+    locale: 'en_US',
+  }
+} as const
+
+export default function ReadingInterface({ bookId = "kant" }: ReadingInterfaceProps) {
   const [selectedLanguage, setSelectedLanguage] = React.useState<LanguageCode>("en")
   const [currentSectionIndex, setCurrentSectionIndex] = React.useState(0)
   const [showVocabulary, setShowVocabulary] = React.useState(false)
@@ -1577,186 +1596,111 @@ The proper problem of pure reason is contained in the question: How are syntheti
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
-      <Card className="border-2 border-purple-500">
-        <CardHeader>
-          <div className="flex items-center justify-between">
-              <div>
-              <CardTitle className="text-2xl font-bold text-purple-900">
-                {currentSection.title}
-              </CardTitle>
-              <div className="mt-2 flex items-center space-x-4">
-                <Badge variant="secondary" className="text-purple-700">
-                  <Star className="h-4 w-4 mr-1" />
-                  {xp} XP
-                </Badge>
-                <Select value={selectedLanguage} onValueChange={(value: LanguageCode) => setSelectedLanguage(value)}>
-                  <SelectTrigger className="w-32">
-                    <Languages className="h-4 w-4 mr-2" />
-                    {selectedLanguage.toUpperCase()}
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="en">English</SelectItem>
-                    <SelectItem value="de">Deutsch</SelectItem>
-                    <SelectItem value="zh">中文</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+    <>
+      <Head>
+        <title>{seoMetadata.title}</title>
+        <meta name="description" content={seoMetadata.description} />
+        <meta name="keywords" content={seoMetadata.keywords} />
+        <meta property="og:title" content={seoMetadata.openGraph.title} />
+        <meta property="og:description" content={seoMetadata.openGraph.description} />
+        <meta property="og:type" content={seoMetadata.openGraph.type} />
+        <meta property="og:locale" content={seoMetadata.openGraph.locale} />
+        <link rel="canonical" href="https://your-domain.com/kant/critique-of-pure-reason" />
+      </Head>
+
+      <main className="reading-interface" role="main" aria-label="Reading interface for Kant's Critique of Pure Reason">
+        <article className="philosophical-text">
+          <header className="text-header">
+            <h1 className="text-title">Critique of Pure Reason</h1>
+            <p className="text-author">by Immanuel Kant</p>
+            
+            <div className="language-controls" role="toolbar" aria-label="Language selection">
+              <Select value={selectedLanguage} onValueChange={(value: LanguageCode) => setSelectedLanguage(value)}>
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Select Language" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="en">English</SelectItem>
+                  <SelectItem value="de">Deutsch</SelectItem>
+                  <SelectItem value="zh">中文</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
-            <div className="flex items-center space-x-4">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setCurrentSectionIndex(Math.max(0, currentSectionIndex - 1))}
-                disabled={currentSectionIndex === 0}
-              >
-                <ChevronLeft className="h-4 w-4 mr-2" />
-                Previous
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setCurrentSectionIndex(Math.min(sections.length - 1, currentSectionIndex + 1))}
-                disabled={currentSectionIndex === sections.length - 1}
-              >
-                Next
-                <ChevronRight className="h-4 w-4 ml-2" />
-              </Button>
-            </div>
-          </div>
-          {currentSection.insight && (
-            <div className="mt-4 bg-purple-50 border-l-4 border-purple-400 p-4">
-              <div className="flex items-start space-x-2">
-                <Lightbulb className="h-5 w-5 text-purple-600 mt-0.5" />
-                <div>
-                  <h4 className="font-medium text-purple-900">Key Insight</h4>
-                  <p className="text-sm text-purple-800 mt-1">
-                    {currentSection.insight}
-                  </p>
-                </div>
-              </div>
-            </div>
-          )}
-        </CardHeader>
-        
-        <CardContent className="space-y-6">
-          <div className="prose prose-purple max-w-none">
-            <ReactMarkdown 
-              remarkPlugins={[remarkGfm]}
-              components={{
-                h2: ({node, ...props}) => <h2 className="text-2xl font-bold text-purple-900 mt-8 mb-4" {...props} />,
-                h3: ({node, ...props}) => <h3 className="text-xl font-semibold text-purple-800 mt-6 mb-3" {...props} />,
-                p: ({node, ...props}) => <p className="text-gray-800 leading-relaxed mb-4" {...props} />
-              }}
+          </header>
+
+          <nav className="section-navigation" aria-label="Section navigation">
+            <Button
+              variant="outline"
+              onClick={() => setCurrentSectionIndex(i => Math.max(0, i - 1))}
+              disabled={currentSectionIndex === 0}
+              aria-label="Previous section"
             >
-              {currentSection.translations[selectedLanguage]}
-            </ReactMarkdown>
+              <ChevronLeft className="h-4 w-4" />
+              Previous
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => setCurrentSectionIndex(i => Math.min(sections.length - 1, i + 1))}
+              disabled={currentSectionIndex === sections.length - 1}
+              aria-label="Next section"
+            >
+              Next
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          </nav>
 
-            {currentSection.diagram && (
-              <div className="my-8 p-4 bg-white rounded-lg border border-purple-200">
-                <h3 className="text-lg font-semibold text-purple-900 mb-2">{currentSection.diagram.title}</h3>
-                <p className="text-sm text-gray-600 mb-4">{currentSection.diagram.description}</p>
-                <div className="bg-white p-4 rounded-lg">
-                  <MermaidDiagram chart={currentSection.diagram.mermaidDefinition} />
-                </div>
+          <section className="current-section" aria-labelledby="current-section-title">
+            <h2 id="current-section-title">{sections[currentSectionIndex].title}</h2>
+            <div className="text-content">
+              <ReactMarkdown 
+                remarkPlugins={[remarkGfm]}
+                components={{
+                  p: ({node, ...props}) => <p className="text-content-paragraph" {...props} />,
+                  h3: ({node, ...props}) => <h3 className="text-content-heading" {...props} />
+                }}
+              >
+                {sections[currentSectionIndex].content}
+              </ReactMarkdown>
+            </div>
+          </section>
+
+          <aside className="study-aids" aria-label="Study aids">
+            <section className="insights" aria-labelledby="insights-title">
+              <h3 id="insights-title">Key Insights</h3>
+              <div className="insight-content">
+                {sections[currentSectionIndex].insight}
               </div>
+            </section>
+
+            {sections[currentSectionIndex].vocabulary && (
+              <section className="vocabulary" aria-labelledby="vocabulary-title">
+                <h3 id="vocabulary-title">Key Terms</h3>
+                <dl className="vocabulary-list">
+                  {sections[currentSectionIndex].vocabulary.map(term => (
+                    <div key={term.term} className="vocabulary-item">
+                      <dt>{term.term}</dt>
+                      <dd>
+                        <strong>Definition:</strong> {term.definition}<br />
+                        <strong>Usage:</strong> {term.usage}
+                      </dd>
+                    </div>
+                  ))}
+                </dl>
+              </section>
             )}
 
-            {currentSection.vocabulary && currentSection.vocabulary.length > 0 && (
-              <div className="mt-8">
-                <Button
-                  variant="outline"
-                  onClick={() => setShowVocabulary(!showVocabulary)}
-                  className="mb-4"
-                >
-                  <BookMarked className="h-4 w-4 mr-2" />
-                  {showVocabulary ? "Hide Vocabulary" : "Show Vocabulary"}
-                </Button>
-                
-                {showVocabulary && (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {currentSection.vocabulary.map((item, index) => (
-                      <div key={index} className="bg-white p-4 rounded-lg border border-purple-200">
-                        <h4 className="font-semibold text-purple-800">{item.term}</h4>
-                        <p className="text-gray-600">{item.definition}</p>
-                        <p className="text-sm text-gray-500 mt-2">Usage: {item.usage}</p>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
+            {sections[currentSectionIndex].diagram && (
+              <section className="diagrams" aria-labelledby="diagram-title">
+                <h3 id="diagram-title">{sections[currentSectionIndex].diagram.title}</h3>
+                <figure>
+                  <MermaidDiagram chart={sections[currentSectionIndex].diagram.mermaidDefinition} />
+                  <figcaption>{sections[currentSectionIndex].diagram.description}</figcaption>
+                </figure>
+              </section>
             )}
-
-            {currentSection.quiz && (
-              <div className="mt-8">
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    setShowQuiz(!showQuiz);
-                    if (!showQuiz) {
-                      setQuizSubmitted(false);
-                      setQuizAnswers({});
-                    }
-                  }}
-                  className="mb-4"
-                >
-                  <Brain className="h-4 w-4 mr-2" />
-                  {showQuiz ? "Hide Quiz" : "Take Quiz"}
-                </Button>
-                
-                {showQuiz && (
-                  <div className="space-y-6">
-                    {currentSection.quiz.map((question) => (
-                      <div key={question.id} className="bg-white p-6 rounded-lg border border-purple-200">
-                        <h4 className="font-semibold text-purple-900 mb-4">{question.question}</h4>
-                        <div className="space-y-2">
-                          {question.options.map((option, idx) => (
-                            <div key={idx} className="flex items-center">
-                              <input
-                                type="radio"
-                                id={`${question.id}-${idx}`}
-                                name={question.id}
-                                value={idx}
-                                checked={quizAnswers[question.id] === idx}
-                                onChange={() => setQuizAnswers(prev => ({...prev, [question.id]: idx}))}
-                                disabled={quizSubmitted}
-                                className="mr-2"
-                              />
-                              <label htmlFor={`${question.id}-${idx}`}>{option}</label>
-                            </div>
-                          ))}
-                        </div>
-                        {quizSubmitted && (
-                          <div className={`mt-4 p-3 rounded ${
-                            quizAnswers[question.id] === question.correctAnswer
-                              ? "bg-green-50 text-green-800"
-                              : "bg-red-50 text-red-800"
-                          }`}>
-                            <p className="font-medium">
-                              {quizAnswers[question.id] === question.correctAnswer
-                                ? "Correct! "
-                                : "Incorrect. "}
-                              {question.explanation}
-                            </p>
-                          </div>
-                        )}
-                      </div>
-                    ))}
-                    {!quizSubmitted && (
-                      <Button
-                        onClick={handleQuizSubmit}
-                        className="mt-4"
-                      >
-                        Submit Quiz
-                      </Button>
-                    )}
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-        </CardContent>
-      </Card>
-    </div>
-  );
+          </aside>
+        </article>
+      </main>
+    </>
+  )
 }

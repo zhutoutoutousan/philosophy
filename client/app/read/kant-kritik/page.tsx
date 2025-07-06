@@ -1,5 +1,5 @@
-import { ReadingInterface } from "@/components/reading-interface"
+import ReadingInterface from "@/components/reading-interface"
 
-export default function KantKritikPage() {
+export default function KantKritik() {
   return <ReadingInterface bookId="kant" />
 } 
